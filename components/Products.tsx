@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ShoppingCart, Eye, Star } from 'lucide-react';
+import { ShoppingCart, Eye, Star, ShoppingBag } from 'lucide-react';
 import { Product } from '../types';
 import { siteData } from '../content/siteData';
 import { useCart } from '../context/CartContext';
@@ -9,30 +9,33 @@ import { toast } from 'react-hot-toast';
 const ProductCard: React.FC<{ product: Product; onQuickView: (p: Product) => void }> = ({ product, onQuickView }) => {
   const { addToCart } = useCart();
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div className="group relative glass rounded-[2rem] border border-white/5 overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_40px_rgba(34,211,238,0.1)] flex flex-col h-full bg-slate-900/40">
       <div className="relative aspect-[4/5] overflow-hidden bg-slate-950">
-        {!imgLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
-          </div>
-        )}
+        
+        {/* Instant Placeholder - Always shows something elegant */}
+        <div className={`absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-cyan-500/10 flex flex-col items-center justify-center transition-opacity duration-500 ${imgLoaded ? 'opacity-0' : 'opacity-100'}`}>
+          <ShoppingBag size={48} className="text-white/10 mb-2" />
+          <span className="text-[10px] font-black text-white/5 uppercase tracking-[0.3em]">THREAD COLLECTION</span>
+        </div>
+
+        {/* Product Image */}
         <img 
           src={product.image} 
           alt={product.name} 
           onLoad={() => setImgLoaded(true)}
-          className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-          loading="lazy" 
+          onError={() => {
+            setImgLoaded(false);
+            setHasError(true);
+          }}
+          className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+          loading="eager"
         />
-        
-        {product.badge && (
-          <div className="absolute top-4 right-4 bg-white text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter z-10 shadow-xl">
-            {product.badge}
-          </div>
-        )}
 
-        <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-end gap-3 p-4 backdrop-blur-[2px]">
+        {/* Quick Actions */}
+        <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-end gap-3 p-4 backdrop-blur-[2px] z-30">
           <button 
             onClick={() => onQuickView(product)}
             className="w-full py-3 glass text-white rounded-xl flex items-center justify-center gap-2 hover:bg-white/10 transition-all font-bold text-sm"
@@ -51,8 +54,16 @@ const ProductCard: React.FC<{ product: Product; onQuickView: (p: Product) => voi
             أضف للسلة
           </button>
         </div>
+
+        {/* Status Badge */}
+        {product.badge && (
+          <div className="absolute top-4 right-4 bg-white text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter z-20 shadow-xl">
+            {product.badge}
+          </div>
+        )}
       </div>
 
+      {/* Details Container */}
       <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-1 text-yellow-400 text-[10px] font-bold">

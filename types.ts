@@ -5,7 +5,7 @@ export interface Product {
   price: number;
   oldPrice?: number;
   image: string;
-  category: 'men' | 'women';
+  category: 'men' | 'women' | 'kids';
   colors: string[];
   sizes: string[];
   rating: number;
