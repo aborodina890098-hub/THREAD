@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,17 +34,38 @@
             },
             animation: {
               'float': 'float 6s ease-in-out infinite',
+              'float-reverse': 'floatReverse 8s ease-in-out infinite',
+              'spin-slow': 'spin 12s linear infinite',
               'bounce-slow': 'bounce 3s infinite',
               'marquee': 'marquee 25s linear infinite',
+              'slide-left': 'slideLeft 0.3s ease-out forwards',
+              'scale-up': 'scaleUp 0.3s ease-out forwards',
+              'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
             },
             keyframes: {
               float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-20px)' },
+                '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                '50%': { transform: 'translateY(-30px) rotate(5deg)' },
+              },
+              floatReverse: {
+                '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                '50%': { transform: 'translateY(30px) rotate(-5deg)' },
+              },
+              pulseGlow: {
+                '0%, 100%': { opacity: '0.5', filter: 'blur(100px)' },
+                '50%': { opacity: '0.8', filter: 'blur(130px)' },
               },
               marquee: {
                 '0%': { transform: 'translateX(0%)' },
                 '100%': { transform: 'translateX(100%)' },
+              },
+              slideLeft: {
+                '0%': { transform: 'translateX(100%)' },
+                '100%': { transform: 'translateX(0)' }
+              },
+              scaleUp: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
               }
             }
           }
@@ -56,17 +77,39 @@
         background-color: #020617;
         color: #f8fafc;
         overflow-x: hidden;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      html.light body {
+        background-color: #f8fafc;
+        color: #020617;
       }
       .glass {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
       }
-      .perspective-1000 {
-        perspective: 1500px;
+      html.light .glass {
+        background: rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .perspective-2000 {
+        perspective: 2000px;
       }
       
+      .shape-3d {
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+      }
+
+      .floating-glass-sphere {
+        background: radial-gradient(circle at 30% 30%, rgba(34, 211, 238, 0.2), rgba(139, 92, 246, 0.1));
+        box-shadow: inset -5px -5px 15px rgba(255, 255, 255, 0.1), 5px 5px 20px rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+        backdrop-filter: blur(5px);
+      }
+
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: #020617; }
       ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -76,10 +119,20 @@
         -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
         color: transparent;
       }
+      html.light .text-outline {
+        -webkit-text-stroke: 1px rgba(0, 0, 0, 0.1);
+      }
 
       .bg-thread-pattern {
-        background-image: radial-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px);
-        background-size: 40px 40px;
+        background-image: radial-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+      }
+
+      .card-3d-hover {
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .card-3d-hover:hover {
+        transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
       }
     </style>
   <script type="importmap">
@@ -96,6 +149,12 @@
 </script>
 </head>
   <body>
+    <!-- Global 3D Decoration Background -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+      <div class="absolute top-[10%] left-[5%] w-64 h-64 floating-glass-sphere animate-float opacity-30"></div>
+      <div class="absolute bottom-[20%] right-[10%] w-96 h-96 floating-glass-sphere animate-float-reverse opacity-20 blur-sm"></div>
+      <div class="absolute top-[50%] left-[40%] w-40 h-40 floating-glass-sphere animate-spin-slow opacity-10"></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
